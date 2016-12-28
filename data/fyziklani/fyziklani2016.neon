@@ -1,13 +1,13 @@
 parameters:
     fyziklani:
         eventTypeID: 1
-        availablePionts: [5, 3, 2, 1]
-        start: '2016-09-27T13:30:00'
-        end: '2016-09-27T15:00:00'
+        availablePoints: [5, 3, 2, 1]
+        start: '2016-12-15T02:45:00'
+        end: '2016-12-17T22:11:00'
         taskOnBoard: 7
         results:
-            display: '2016-09-27T14:40:00'
-            hidde: '2016-09-27T14:02:00'
+            display: '2016-12-15T02:47:00'
+            hidde: '2016-12-16T02:30:00'
 
    
     

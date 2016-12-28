@@ -1,26 +1,24 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace FKSDB\Components\Grids\Fyziklani;
 
-use \NiftyGrid\DataSource\NDataSource;
+use FKSDB\Components\Grids\BaseGrid;
+use FyziklaniModule\BasePresenter;
+use Nette\Database\Table\Selection;
+use SQL\SearchableDataSource;
+
 
 /**
  * Description of SubmitsGrid
  *
  * @author miso
  */
-class FyziklanitaskGrid extends \FKSDB\Components\Grids\BaseGrid {
+class FyziklaniTaskGrid extends BaseGrid {
 
     private $presenter;
     protected $searchable;
 
-    public function __construct(\OrgModule\FyziklaniPresenter $presenter) {
+    public function __construct(BasePresenter $presenter) {
         $this->presenter = $presenter;
         parent::__construct();
     }
@@ -32,7 +30,13 @@ class FyziklanitaskGrid extends \FKSDB\Components\Grids\BaseGrid {
         $this->addColumn('name',_('Názov ǔlohy'));
 
         $submits = $this->presenter->database->table(\DbNames::TAB_FYZIKLANI_TASK)->where('event_id = ?',$presenter->eventID);
-        $this->setDataSource(new NDataSource($submits));
+        $dataSource = new SearchableDataSource($submits);
+        $dataSource->setFilterCallback(function(Selection $table, $value) {
+                    $tokens = preg_split('/\s+/', $value);
+                    foreach ($tokens as $token) {
+                        $table->where('name LIKE CONCAT(\'%\', ? , \'%\') OR fyziklani_task_id LIKE CONCAT(\'%\', ? , \'%\')', $token, $token);
+                    }
+                });
+        $this->setDataSource($dataSource);
     }
-
 }

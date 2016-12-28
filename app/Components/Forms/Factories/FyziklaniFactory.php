@@ -8,7 +8,7 @@ use \Nette\DI\Container;
 use \Nette\Application\UI\Form;
 
 /**
- * 
+ *
  *
  * @author Michal Červeňák <miso@fykos.cz>
  */
@@ -23,10 +23,9 @@ class FyziklaniFactory {
     private function createPointsField() {
         $field = new RadioList(_('Počet bodů'));
         $items = [];
-        foreach ($this->container->parameters['fyziklani']['availablePionts'] as $v) {
+        foreach ($this->container->parameters['fyziklani']['availablePoints'] as $v) {
             $items[$v] = $v;
         }
-
         $field->setItems($items);
         $field->setRequired();
         return $field;
@@ -35,8 +34,8 @@ class FyziklaniFactory {
     private function createTaskCodeField() {
         $field = new TextInput(_('Kód úlohy'));
         $field->setRequired();
-        $field->addRule(\Nette\Forms\Form::PATTERN,_('Nesprávyn tvar'),'[0-9]{5}[A-Z]{2}[0-9X]');
-        $field->setAttribute('placeholder','00000XX0');
+        $field->addRule(\Nette\Forms\Form::PATTERN,_('Nesprávyn tvar'),'[0-9]{6}[A-Z]{2}[0-9]');
+        $field->setAttribute('placeholder','000000XX0');
         return $field;
     }
 
@@ -73,8 +72,6 @@ class FyziklaniFactory {
         $form->addComponent($this->createTeamIDField(),'team_id');
         $form->addComponent($this->createTaskField(),'task');
         $form->addComponent($this->createPointsField(),'points');
-
         return $form;
     }
-
 }
