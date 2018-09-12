@@ -22,7 +22,6 @@ class ServiceEventParticipant extends AbstractServiceSingle {
             throw $e;
         }
     }
-
     public function updateModel(IModel $model, $data, $alive = true) {
         /**
          * @var $model ModelEventParticipant
@@ -36,5 +35,4 @@ class ServiceEventParticipant extends AbstractServiceSingle {
 
         }
     }
-
 }
