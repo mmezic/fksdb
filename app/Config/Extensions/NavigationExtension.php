@@ -2,7 +2,7 @@
 
 namespace FKSDB\Config\Extensions;
 
-use Nette\Config\CompilerExtension;
+use Nette\DI\CompilerExtension;
 
 /**
  * Due to author's laziness there's no class doc (or it's self explaining).
@@ -23,7 +23,7 @@ class NavigationExtension extends CompilerExtension {
         ]);
         $navbar = $builder->addDefinition('navbar')
                 ->setClass('FKSDB\Components\Controls\Navigation\Navigation');
-        $navbar->setShared(true)->setAutowired(true);
+        $navbar/*->setShared(true)*/->setAutowired(true);
 
 
         foreach ($config['nodes'] as $nodeId => $arguments) {

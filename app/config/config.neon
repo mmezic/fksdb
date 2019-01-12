@@ -182,12 +182,13 @@ php:
     session.gc_maxlifetime: 1213200
     # zlib.output_compression: yes
 
+
+
 nette:
-    database:
-        reflection: discovered
     application:
         errorPresenter: Error
-
+    database:
+        reflection: discovered
     session:
         expiration: 14 days
         autoStart: true

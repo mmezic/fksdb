@@ -21,7 +21,7 @@ use Nette,
  *
  * @author     David Grudl
  */
-class NetteExtension extends Nette\Config\CompilerExtension
+class NetteExtension extends Nette\DI\CompilerExtension
 {
 	public $defaults = array(
 		'xhtml' => TRUE,
@@ -84,11 +84,11 @@ class NetteExtension extends Nette\Config\CompilerExtension
 
 
 		// cache
-		$container->addDefinition($this->prefix('cacheJournal'))
-			->setClass('Nette\Caching\Storages\FileJournal', array('%tempDir%'));
+		/*$container->addDefinition($this->prefix('cacheJournal'))
+			->setClass('Nette\Caching\Storages\FileJournal', array('%tempDir%'));*/
 
-		$container->addDefinition('cacheStorage') // no namespace for back compatibility
-			->setClass('Nette\Caching\Storages\FileStorage', array('%tempDir%/cache'));
+	/*	$container->addDefinition('cacheStorage') // no namespace for back compatibility
+			->setClass('Nette\Caching\Storages\FileStorage', array('%tempDir%/cache'));*/
 
 		$container->addDefinition($this->prefix('templateCacheStorage'))
 			->setClass('Nette\Caching\Storages\PhpFileStorage', array('%tempDir%/cache'))
@@ -100,23 +100,23 @@ class NetteExtension extends Nette\Config\CompilerExtension
 
 
 		// http
-		$container->addDefinition($this->prefix('httpRequestFactory'))
+		/*$container->addDefinition($this->prefix('httpRequestFactory'))
 			->setClass('Nette\Http\RequestFactory')
-			->setInternal(TRUE);
+			;*/
 
-		$container->addDefinition('httpRequest') // no namespace for back compatibility
+		/*$container->addDefinition('httpRequest') // no namespace for back compatibility
 			->setClass('Nette\Http\Request')
 			->setFactory('@Nette\Http\RequestFactory::createHttpRequest');
-
-		$container->addDefinition('httpResponse') // no namespace for back compatibility
+*/
+		/*$container->addDefinition('httpResponse') // no namespace for back compatibility
 			->setClass('Nette\Http\Response');
-
-		$container->addDefinition($this->prefix('httpContext'))
+*/
+	/*	$container->addDefinition($this->prefix('httpContext'))
 			->setClass('Nette\Http\Context');
-
+*/
 
 		// session
-		$session = $container->addDefinition('session') // no namespace for back compatibility
+	/*	$session = $container->addDefinition('session') // no namespace for back compatibility
 			->setClass('Nette\Http\Session');
 
 		if (isset($config['session']['expiration'])) {
@@ -128,7 +128,7 @@ class NetteExtension extends Nette\Config\CompilerExtension
 		unset($config['session']['expiration'], $config['session']['autoStart'], $config['session']['iAmUsingBadHost']);
 		if (!empty($config['session'])) {
 			$session->addSetup('setOptions', array($config['session']));
-		}
+		}*/
 
 
 		// security
@@ -164,8 +164,8 @@ class NetteExtension extends Nette\Config\CompilerExtension
 		// application
 		$application = $container->addDefinition('application') // no namespace for back compatibility
 			->setClass('Nette\Application\Application')
-			->addSetup('$catchExceptions', $config['application']['catchExceptions'])
-			->addSetup('$errorPresenter', $config['application']['errorPresenter']);
+			->addSetup('$catchExceptions', [$config['application']['catchExceptions']])
+			->addSetup('$errorPresenter', [$config['application']['errorPresenter']]);
 
 		if ($config['application']['debugger']) {
 			$application->addSetup('Nette\Application\Diagnostics\RoutingPanel::initializePanel');
@@ -204,19 +204,19 @@ class NetteExtension extends Nette\Config\CompilerExtension
 		$container->addDefinition($this->prefix('mail'))
 			->setClass('Nette\Mail\Message')
 			->addSetup('setMailer')
-			->setShared(FALSE);
+			;
 
 
 		// forms
 		$container->addDefinition($this->prefix('basicForm'))
 			->setClass('Nette\Forms\Form')
-			->setShared(FALSE);
+			;
 
 
 		// templating
 		$latte = $container->addDefinition($this->prefix('latte'))
 			->setClass('Nette\Latte\Engine')
-			->setShared(FALSE);
+			;
 
 		if (empty($config['xhtml'])) {
 			$latte->addSetup('$service->getCompiler()->defaultContentType = ?', Nette\Latte\Compiler::CONTENT_HTML);
@@ -226,7 +226,7 @@ class NetteExtension extends Nette\Config\CompilerExtension
 			->setClass('Nette\Templating\FileTemplate')
 			->addSetup('registerFilter', array($latte))
 			->addSetup('registerHelperLoader', array('Nette\Templating\Helpers::loader'))
-			->setShared(FALSE);
+			;
 
 
 		// database
@@ -281,7 +281,7 @@ class NetteExtension extends Nette\Config\CompilerExtension
 	}
 
 
-	public function afterCompile(Nette\Utils\PhpGenerator\ClassType $class)
+	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
 		$initialize = $class->methods['initialize'];
 		$container = $this->getContainerBuilder();

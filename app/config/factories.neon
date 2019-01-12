@@ -27,9 +27,5 @@ services:
     event.DBReflectionFactory:
         class: FKSDB\Components\Forms\Factories\Events\DBReflectionFactory
 
-
-factories:
-# (so far unused)
-
 includes:
     - logToFlash.neon
