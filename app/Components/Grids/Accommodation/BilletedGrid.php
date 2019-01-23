@@ -48,7 +48,7 @@ abstract class BilletedGrid extends BaseGrid {
             });
 
         $this->addGlobalButton('list', ['id' => null])
-            ->setLabel(_('Zoznam ubytovaní'))
+            ->setLabel(_('List of accommodations'))
             ->setLink($this->getPresenter()->link('list'));
 
     }
@@ -68,6 +68,9 @@ abstract class BilletedGrid extends BaseGrid {
             })->setSortable(false);
     }
 
+    /**
+     * @throws \NiftyGrid\DuplicateColumnException
+     */
     protected function addColumnRole() {
         $this->addColumn('role', _('Role'))
             ->setRenderer(function ($row) {
@@ -85,8 +88,8 @@ abstract class BilletedGrid extends BaseGrid {
                         ->addAttributes(['class' => 'badge badge-primary'])
                         ->add(_('Teacher') . ' - ' . $team->name));
                 }
-                $eventOrgs = $person->getEventOrg()->where('event_id', $eventId);
-                foreach ($eventOrgs as $row) {
+                $eventOrganizers = $person->getEventOrg()->where('event_id', $eventId);
+                foreach ($eventOrganizers as $row) {
                     $hasRole = true;
                     $org = ModelEventOrg::createFromTableRow($row);
                     $container->add(Html::el('span')

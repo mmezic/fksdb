@@ -37,7 +37,9 @@ class Fyziklani13Generator extends AbstractSymbolGenerator {
             ->where('variable_symbol>=?', self::variable_symbol_start)
             ->where('variable_symbol<=?', self::variable_symbol_end)
             ->max('variable_symbol');
-
+        if ($maxVariableSymbol < self::variable_symbol_start) {
+            $maxVariableSymbol = self::variable_symbol_start;
+        }
         $variableNumber = $maxVariableSymbol + 1;
         if ($variableNumber > self::variable_symbol_end) {
             throw new OutOfRangeException(_('variable_symbol overflow'));

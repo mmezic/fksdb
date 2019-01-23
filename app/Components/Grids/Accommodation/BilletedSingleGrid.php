@@ -34,6 +34,7 @@ class BilletedSingleGrid extends BilletedGrid {
         $this->setDataSource($dataSource);
 
         $this->addColumnName();
+        $this->addColumnRole();
 
         $this->addColumnPayment();
 
