@@ -15,7 +15,7 @@
     {block head}{/block}
 </head>
 <!-- Random background generator -->
-<body data-bg="{rand(1,3)}" data-contest="{(!is_null($contestSymbol))?$contestSymbol:''}">
+<body data-contest="{(!is_null($contestSymbol))?$contestSymbol:''}">
 {block body}
     <nav n:class="'fixed-top navbar navbar-expand-md ',(!is_null($navbarClass))?($navbarClass):('bg-light navbar-light')"
             role="navigation">
@@ -36,7 +36,7 @@
 
             {block user-info}
                 {if $user->isLoggedIn()}
-                    <ul class="nav navbar-nav navbar-right">
+                    <ul class="nav navbar-nav ml-auto">
                         {var $login => $user->getIdentity()}
                         <li class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
@@ -59,7 +59,7 @@
 
         </div><!-- /.navbar-collapse -->
     </nav>
-    <main id="wrap" style="min-height:100%">
+    <main  data-bg="{rand(1,3)}" id="wrap" style="min-height:100%">
         <div class="container py-4 bg-white-container" style="height:100%">
             {control breadcrumbs}
             {block titleBody}
