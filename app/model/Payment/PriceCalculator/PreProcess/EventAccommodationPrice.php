@@ -57,6 +57,7 @@ class EventAccommodationPrice extends AbstractPreProcess {
     private static function getPriceFromModel(ModelEventAccommodation $modelEventAccommodation, Price &$price): Price {
         switch ($price->getCurrency()) {
             case Price::CURRENCY_KC:
+            case Price::CURRENCY_CZK:
                 $amount = $modelEventAccommodation->price_kc;
                 break;
             case Price::CURRENCY_EUR:

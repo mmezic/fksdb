@@ -8,6 +8,7 @@ use Events\Model\Holder\Holder;
 use FKSDB\model\Fyziklani\NotSetGameParametersException;
 use FKSDB\ORM\Models\Fyziklani\ModelFyziklaniGameSetup;
 use Nette\Database\Table\ActiveRow;
+use Nette\Database\Table\GroupedSelection;
 use Nette\DateTime;
 use Nette\InvalidStateException;
 use Nette\Security\IResource;
@@ -58,6 +59,13 @@ class ModelEvent extends AbstractModelSingle implements IResource {
             $data[] = ModelEventAccommodation::createFromTableRow($item);
         }
         return $data;
+    }
+
+    /**
+     * @return GroupedSelection
+     */
+    public function getScheduleGroups(): GroupedSelection {
+        return $this->related(DbNames::TAB_SCHEDULE_GROUP);
     }
 
     /**

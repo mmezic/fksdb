@@ -12,6 +12,7 @@ use Submits\StorageException;
 /**
  * Class ServicePaymentAccommodation
  * @package FKSDB\ORM\Services
+ * @deprecated
  */
 class ServicePaymentAccommodation extends AbstractServiceSingle {
     protected $tableName = DbNames::TAB_PAYMENT_ACCOMMODATION;

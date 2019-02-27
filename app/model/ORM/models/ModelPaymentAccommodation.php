@@ -14,6 +14,7 @@ use Nette\Database\Table\ActiveRow;
  * @property ActiveRow event_person_accommodation
  * @property int event_person_accommodation_id
  * @property int payment_accommodation_id
+ * @deprecated
  */
 class ModelPaymentAccommodation extends AbstractModelSingle {
     /**

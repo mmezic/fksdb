@@ -11,7 +11,11 @@ namespace FKSDB\Payment\PriceCalculator;
 class Price {
 
     const CURRENCY_EUR = 'eur';
+    /**
+     * @deprecated
+     */
     const CURRENCY_KC = 'kc';
+    const CURRENCY_CZK = 'czk';
     /**
      * @var string
      */
@@ -74,7 +78,7 @@ class Price {
      * @return array
      */
     public static function getAllCurrencies(): array {
-        return [self::CURRENCY_KC, self::CURRENCY_EUR];
+        return [self::CURRENCY_KC, self::CURRENCY_CZK, self::CURRENCY_EUR];
     }
 
     /**
@@ -86,6 +90,7 @@ class Price {
         switch ($currency) {
             case self::CURRENCY_EUR:
                 return '€';
+            case self::CURRENCY_CZK:
             case self::CURRENCY_KC:
                 return 'Kč';
             default:

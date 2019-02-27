@@ -2,6 +2,16 @@
 
 namespace EventModule;
 
+use FKSDB\Components\Factories\ScheduleFactory;
+use FKSDB\Components\Grids\Schedule\GroupsGrid;
+use FKSDB\Components\Grids\Schedule\ItemsGrid;
+use FKSDB\Components\Grids\Schedule\PersonsGrid;
+use FKSDB\ORM\Models\Schedule\ModelScheduleGroup;
+use FKSDB\ORM\Models\Schedule\ModelScheduleItem;
+use FKSDB\ORM\Services\Schedule\ServiceScheduleGroup;
+use FKSDB\ORM\Services\Schedule\ServiceScheduleItem;
+use Nette\Application\BadRequestException;
+use Nette\Application\ForbiddenRequestException;
 use Nette\Database\Connection;
 use Nette\InvalidArgumentException;
 
@@ -11,9 +21,34 @@ use Nette\InvalidArgumentException;
  */
 class SchedulePresenter extends BasePresenter {
     /**
+     * @var int
+     * @persistent
+     */
+    public $id;
+    /**
      * @var Connection
      */
     private $connection;
+    /**
+     * @var ScheduleFactory
+     */
+    private $scheduleFactory;
+    /**
+     * @var ModelScheduleGroup
+     */
+    private $group;
+    /**
+     * @var ModelScheduleItem
+     */
+    private $item;
+    /**
+     * @var ServiceScheduleGroup
+     */
+    private $serviceScheduleGroup;
+    /**
+     * @var ServiceScheduleItem
+     */
+    private $serviceScheduleItem;
 
     /**
      * @param Connection $connection
@@ -22,8 +57,44 @@ class SchedulePresenter extends BasePresenter {
         $this->connection = $connection;
     }
 
+    /**
+     * @param ServiceScheduleGroup $serviceScheduleGroup
+     */
+    public function injectServiceScheduleGroup(ServiceScheduleGroup $serviceScheduleGroup) {
+        $this->serviceScheduleGroup = $serviceScheduleGroup;
+    }
+
+    /**
+     * @param ServiceScheduleItem $serviceScheduleItem
+     */
+    public function injectServiceScheduleItem(ServiceScheduleItem $serviceScheduleItem) {
+        $this->serviceScheduleItem = $serviceScheduleItem;
+    }
+
+    /**
+     * @param ScheduleFactory $scheduleFactory
+     */
+    public function injectScheduleComponentFactory(ScheduleFactory $scheduleFactory) {
+        $this->scheduleFactory = $scheduleFactory;
+    }
+
     public function titleDefault() {
         $this->setTitle(\sprintf(_('Schedule')));
+        $this->setIcon('fa fa-calendar-check-o');
+    }
+
+    public function titleGroups() {
+        $this->setTitle(\sprintf(_('Schedule groups')));
+        $this->setIcon('fa fa-calendar-check-o');
+    }
+
+    public function titleItem() {
+        $this->setTitle(\sprintf(_('Schedule item #%d'), $this->item->schedule_item_id));
+        $this->setIcon('fa fa-calendar-check-o');
+    }
+
+    public function titleGroup() {
+        $this->setTitle(\sprintf(_('Schedule group #%d'), $this->group->schedule_group_id));
         $this->setIcon('fa fa-calendar-check-o');
     }
 
@@ -104,5 +175,98 @@ GROUP BY p.person_id,type,schedule', $this->getEvent()->event_id)->fetchAll();
         $this->template->participants = $results;
         $this->template->schedule = $schedule;
         $this->template->stats = $stats;
+    }
+
+    /**
+     * @param $id
+     * @throws BadRequestException
+     * @throws ForbiddenRequestException
+     * @throws \Nette\Application\AbortException
+     */
+    public function actionGroup($id) {
+        if (!$this->group) {
+            $row = $this->serviceScheduleGroup->findByPrimary($id);
+            if (!$row) {
+                throw new BadRequestException();
+            }
+            $this->group = ModelScheduleGroup::createFromTableRow($row);
+        }
+        if ($this->group->getEvent()->event_id !== $this->getEvent()->event_id) {
+            throw new ForbiddenRequestException('Schedule group does not belong to this event');
+        }
+        /**
+         * @var ItemsGrid $component
+         */
+        $component = $this->getComponent('itemsGrid');
+        $component->setGroup($this->getGroup());
+    }
+
+    /**
+     * @param $id
+     * @throws BadRequestException
+     * @throws ForbiddenRequestException
+     * @throws \Nette\Application\AbortException
+     */
+    public function actionItem($id) {
+        if (!$this->item) {
+            $row = $this->serviceScheduleItem->findByPrimary($id);
+            if (!$row) {
+                throw new BadRequestException();
+            }
+            $this->item = ModelScheduleItem::createFromTableRow($row);
+        }
+        if ($this->item->getGroup()->getEvent()->event_id !== $this->getEvent()->event_id) {
+            throw new ForbiddenRequestException('Schedule item does not belong to this event');
+        }
+        /**
+         * @var PersonsGrid $component
+         */
+        $component = $this->getComponent('personsGrid');
+        $component->setItem($this->getItem());
+    }
+
+    /**
+     * @return ModelScheduleGroup
+     */
+    private function getGroup(): ModelScheduleGroup {
+        return $this->group;
+    }
+
+    /**
+     * @return ModelScheduleItem
+     */
+    private function getItem(): ModelScheduleItem {
+        return $this->item;
+    }
+
+    /**
+     *
+     */
+    public function renderItem() {
+        $this->template->item = $this->getItem();
+        $this->template->group = $this->getItem()->getGroup();
+    }
+
+    /**
+     * @return GroupsGrid
+     * @throws \Nette\Application\AbortException
+     * @throws \Nette\Application\BadRequestException
+     */
+    public function createComponentGroupsGrid(): GroupsGrid {
+        return $this->scheduleFactory->createGroupsGrid($this->getEvent());
+    }
+
+    /**
+     * @return ItemsGrid
+     */
+    public function createComponentItemsGrid(): ItemsGrid {
+        return $this->scheduleFactory->createItemsGrid();
+    }
+
+    /**
+     * @return PersonsGrid
+     */
+    public function createComponentPersonsGrid(): PersonsGrid {
+        return $this->scheduleFactory->createPersonsGrid();
     }
 }

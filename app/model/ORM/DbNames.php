@@ -64,4 +64,8 @@ class DbNames {
     const TAB_FYZIKLANI_ROOM = 'brawl_room';
     const TAB_FYZIKLANI_TEAM_POSITION = 'brawl_team_position';
 
+    const TAB_SCHEDULE_GROUP = 'schedule_group';
+    const TAB_SCHEDULE_ITEM = 'schedule_item';
+    const TAB_PERSON_SCHEDULE = 'person_schedule';
+
 }
