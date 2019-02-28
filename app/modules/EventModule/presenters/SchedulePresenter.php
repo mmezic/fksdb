@@ -2,6 +2,8 @@
 
 namespace EventModule;
 
+use FKSDB\Components\Controls\Schedule\GroupControl;
+use FKSDB\Components\Controls\Schedule\ItemControl;
 use FKSDB\Components\Factories\ScheduleFactory;
 use FKSDB\Components\Grids\Schedule\GroupsGrid;
 use FKSDB\Components\Grids\Schedule\ItemsGrid;
@@ -199,6 +201,11 @@ GROUP BY p.person_id,type,schedule', $this->getEvent()->event_id)->fetchAll();
          */
         $component = $this->getComponent('itemsGrid');
         $component->setGroup($this->getGroup());
+        /**
+         * @var GroupControl $groupControl
+         */
+        $groupControl = $this->getComponent('groupControl');
+        $groupControl->setGroup($this->getGroup());
     }
 
     /**
@@ -223,6 +230,16 @@ GROUP BY p.person_id,type,schedule', $this->getEvent()->event_id)->fetchAll();
          */
         $component = $this->getComponent('personsGrid');
         $component->setItem($this->getItem());
+        /**
+         * @var GroupControl $groupControl
+         */
+        $groupControl = $this->getComponent('groupControl');
+        $groupControl->setGroup($this->getItem()->getGroup());
+        /**
+         * @var ItemControl $itemControl
+         */
+        $itemControl = $this->getComponent('itemControl');
+        $itemControl->setItem($this->getItem());
     }
 
     /**
@@ -268,5 +285,19 @@ GROUP BY p.person_id,type,schedule', $this->getEvent()->event_id)->fetchAll();
      */
     public function createComponentPersonsGrid(): PersonsGrid {
         return $this->scheduleFactory->createPersonsGrid();
+    }
+
+    /**
+     * @return GroupControl
+     */
+    public function createComponentGroupControl(): GroupControl {
+        return $this->scheduleFactory->createGroupControl();
+    }
+
+    /**
+     * @return ItemControl
+     */
+    public function createComponentItemControl(): ItemControl {
+        return $this->scheduleFactory->createItemControl();
     }
 }

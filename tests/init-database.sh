@@ -15,7 +15,9 @@ for i in `seq 1 $COUNT` ; do
 
 	mysql -e "CREATE DATABASE \`$INS_NAME\`"
 
-	mysql $INS_NAME <${SCRIPT_PATH}/../sql/schema.sql && echo "Created schema $INS_NAME"
+	mysql $INS_NAME <${SCRIPT_PATH}/../sql/schema/schema.sql && echo "Created schema $INS_NAME"
+
+	mysql $INS_NAME <${SCRIPT_PATH}/../sql/schema/fyziklani.sql && echo "Created schema $INS_NAME"
 
 	mysql $INS_NAME <${SCRIPT_PATH}/../sql/views.sql && echo "Created views $INS_NAME"
 
