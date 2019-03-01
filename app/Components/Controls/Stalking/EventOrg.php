@@ -14,4 +14,17 @@ class EventOrg extends StalkingComponent {
         $this->template->setFile(__DIR__ . '/EventOrg.latte');
         $this->template->render();
     }
+    /**
+     * @return string
+     */
+    protected function getHeadline(): string {
+        return _('Event org');
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getAllowedModes(): array {
+        return [];
+    }
 }

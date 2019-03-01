@@ -19,10 +19,10 @@
     </div>
     <div class="row">
         <b class="col-2">{_'Start'}</b>
-        <span class="col-10">{$model->start}</span>
+        <span class="col-10">{$model->start->format(_('d. m. Y H:i'))}</span>
     </div>
     <div class="row">
         <b class="col-2">{_'End'}</b>
-        <span class="col-10">{$model->end}</span>
+        <span class="col-10">{$model->end->format(_('d. m. Y H:i'))}</span>
     </div>
 </div>

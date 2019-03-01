@@ -12,8 +12,10 @@ use FKSDB\Components\Controls\Stalking\EventTeacher;
 use FKSDB\Components\Controls\Stalking\Flag;
 use FKSDB\Components\Controls\Stalking\Login;
 use FKSDB\Components\Controls\Stalking\Org;
+use FKSDB\Components\Controls\Stalking\Payment;
 use FKSDB\Components\Controls\Stalking\PersonHistory;
 use FKSDB\Components\Controls\Stalking\Role;
+use FKSDB\Components\Controls\Stalking\Schedule;
 use FKSDB\Components\Controls\Stalking\StalkingComponent;
 use FKSDB\Components\Forms\Containers\Models\ContainerWithOptions;
 use FKSDB\Components\Forms\Factories\ReferencedPerson\ReferencedPersonFactory;
@@ -186,6 +188,21 @@ class StalkingPresenter extends BasePresenter {
      */
     public function createComponentFlag(): Flag {
         return new Flag($this->getPerson(), $this->getTranslator(), $this->getMode());
+    }
+
+    /**
+     * @return Schedule
+     * @throws BadRequestException
+     */
+    public function createComponentSchedule(): Schedule {
+        return new Schedule($this->getPerson(), $this->getTranslator(), $this->getMode());
+    }
+    /**
+     * @return Payment
+     * @throws BadRequestException
+     */
+    public function createComponentPayment(): Payment {
+        return new Payment($this->getPerson(), $this->getTranslator(), $this->getMode());
     }
 
     /**

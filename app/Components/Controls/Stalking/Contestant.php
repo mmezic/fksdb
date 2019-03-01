@@ -14,4 +14,17 @@ class Contestant extends StalkingComponent {
         $this->template->setFile(__DIR__ . '/Contestant.latte');
         $this->template->render();
     }
+    /**
+     * @return string
+     */
+    protected function getHeadline(): string {
+        return _('Contestant');
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function getAllowedModes(): array {
+        return [];
+    }
 }
