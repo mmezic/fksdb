@@ -24,7 +24,7 @@ class EventParticipant extends StalkingComponent {
     /**
      * @return string[]
      */
-    protected function getAllowedModes(): array {
+    protected function getAllowedPermissions(): array {
         return [StalkingComponent::PERMISSION_BASIC, StalkingComponent::PERMISSION_RESTRICT, StalkingComponent::PERMISSION_FULL];
     }
 }

@@ -24,7 +24,7 @@ class Login extends StalkingComponent {
     /**
      * @return string[]
      */
-    protected function getAllowedModes(): array {
+    protected function getAllowedPermissions(): array {
         return [ StalkingComponent::PERMISSION_FULL ,StalkingComponent::PERMISSION_RESTRICT];
     }
 }

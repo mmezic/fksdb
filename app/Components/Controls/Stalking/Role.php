@@ -28,7 +28,7 @@ class Role extends StalkingComponent {
     /**
      * @return array
      */
-    protected function getAllowedModes(): array {
+    protected function getAllowedPermissions(): array {
         return [StalkingComponent::PERMISSION_FULL, StalkingComponent::PERMISSION_RESTRICT];
     }
 

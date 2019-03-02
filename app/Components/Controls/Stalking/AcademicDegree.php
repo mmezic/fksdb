@@ -3,23 +3,22 @@
 namespace FKSDB\Components\Controls\Stalking;
 
 /**
- * Class PersonHistory
+ * Class BaseInfo
  * @package FKSDB\Components\Controls\Stalking
  */
-class PersonHistory extends StalkingComponent {
+class AcademicDegree extends StalkingComponent {
 
     public function render() {
         $this->beforeRender();
-        $this->template->historys = $this->modelPerson->related(\DbNames::TAB_PERSON_HISTORY, 'person_id');
-        $this->template->setFile(__DIR__ . '/PersonHistory.latte');
+        $this->template->info = $this->modelPerson->getInfo();
+        $this->template->setFile(__DIR__ . '/AcademicDegree.latte');
         $this->template->render();
     }
-
     /**
      * @return string
      */
     protected function getHeadline(): string {
-        return _('Person history');
+        return _('Academic degree');
     }
 
     /**

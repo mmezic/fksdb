@@ -1,6 +1,5 @@
-<div class="card mb-3 border-primary">
-    <h4 class="card-header bg-primary text-white">{_'Org'}</h4>
-
+{layout './@layout.latte'}
+{block content}
     {if count($orgs)}
         {foreach $orgs as $org}
             <h3 class="card-header">{control contestBadge, $org->contest_id}</h3>
@@ -105,5 +104,4 @@
             {control noRecords}
         </div>
     {/if}
-
-</div>
+{/block}

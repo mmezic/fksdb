@@ -1,6 +1,5 @@
-<div class="card mb-3 border-primary">
-    <h4 class="card-header bg-primary text-white">{_'Event org'}</h4>
-
+{layout './@layout.latte'}
+{block content}
     {if count($orgs)}
         <ul class="list-group list-group-flush">
             {foreach $orgs as $row}
@@ -21,4 +20,4 @@
             {control noRecords}
         </div>
     {/if}
-</div>
+{/block}

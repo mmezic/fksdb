@@ -51,7 +51,7 @@ abstract class StalkingComponent extends Control {
         $this->template->setTranslator($this->translator);
         $this->template->mode = $this->mode;
         $this->template->headline = $this->getHeadline();
-        $this->template->allowedModes = $this->getAllowedModes();
+        $this->template->allowedModes = $this->getAllowedPermissions();
     }
 
     /**
@@ -97,5 +97,5 @@ abstract class StalkingComponent extends Control {
     /**
      * @return string[]
      */
-    abstract protected function getAllowedModes(): array;
+    abstract protected function getAllowedPermissions(): array;
 }

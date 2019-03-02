@@ -25,7 +25,7 @@ class EventTeacher extends StalkingComponent {
     /**
      * @return array
      */
-    protected function getAllowedModes(): array {
+    protected function getAllowedPermissions(): array {
         return [StalkingComponent::PERMISSION_BASIC, StalkingComponent::PERMISSION_RESTRICT, StalkingComponent::PERMISSION_FULL];
     }
 }

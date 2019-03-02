@@ -24,7 +24,7 @@ class BaseInfo extends StalkingComponent {
     /**
      * @return string[]
      */
-    protected function getAllowedModes(): array {
-        return [];
+    protected function getAllowedPermissions(): array {
+        return [StalkingComponent::PERMISSION_FULL, StalkingComponent::PERMISSION_RESTRICT];
     }
 }
