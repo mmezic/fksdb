@@ -138,15 +138,15 @@ CREATE TABLE IF NOT EXISTS `event_participant` (
   `arrival_time`          VARCHAR(20)   NULL     DEFAULT NULL
   COMMENT 'Čas příjezdu',
   `arrival_destination`   VARCHAR(20)   NULL     DEFAULT NULL
-  COMMENT 'Místo prijezdu\n',
+  COMMENT 'Místo prijezdu',
   `arrival_ticket`        TINYINT(1)    NULL     DEFAULT NULL
   COMMENT 'společný lístek na cestu tam\n',
   `departure_time`        VARCHAR(20)   NULL     DEFAULT NULL
-  COMMENT 'Čas odjezdu\n',
+  COMMENT 'Čas odjezdu',
   `departure_destination` VARCHAR(20)   NULL     DEFAULT NULL
-  COMMENT 'Místo odjezdu\n',
+  COMMENT 'Místo odjezdu',
   `departure_ticket`      TINYINT(1)    NULL     DEFAULT NULL
-  COMMENT 'společný lístek na cestu zpět\n\n',
+  COMMENT 'společný lístek na cestu zpět',
   `swimmer`               TINYINT(1)    NULL     DEFAULT NULL
   COMMENT 'plavec?',
   `used_drugs`            TEXT          NULL     DEFAULT NULL
@@ -1301,35 +1301,53 @@ CREATE TABLE IF NOT EXISTS `fyziklani_task` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
 )
-  ENGINE = InnoDB;
+  ENGINE = 'InnoDB';
 
 -- -----------------------------------------------------
 -- Table `fyziklani_submit`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `fyziklani_submit` (
-  `fyziklani_submit_id` INT       NOT NULL AUTO_INCREMENT,
-  `fyziklani_task_id`   INT       NOT NULL,
-  `e_fyziklani_team_id` INT       NOT NULL,
-  `points`              TINYINT   NOT NULL,
-  `created`             TIMESTAMP NOT NULL DEFAULT 0,
-  `modified`            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `fyziklani_submit_id` INT         NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `fyziklani_task_id`   INT         NOT NULL,
+  `e_fyziklani_team_id` INT         NOT NULL,
+  `points`              TINYINT     NOT NULL,
+  `state`       VARCHAR(64) NULL     DEFAULT NULL,
+  `checked_by`          INT(11)     NULL     DEFAULT NULL,
+  `created`             DATETIME    NULL     DEFAULT CURRENT_TIMESTAMP,
+  `created_by`          INT(11)     NULL     DEFAULT NULL,
+  `modified`            TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
   ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`fyziklani_submit_id`),
   INDEX `fk_fyziklani_submit_1_idx` (`fyziklani_task_id` ASC),
   INDEX `fk_fyziklani_submit_2_idx` (`e_fyziklani_team_id` ASC),
+  INDEX `fk_fyziklani_submit_3_idx` (`checked_by` ASC),
+  INDEX `fk_fyziklani_submit_4_idx` (`created_by` ASC),
   UNIQUE INDEX `uq_fyziklani_task_id_e_fyziklani_team_id` (`fyziklani_task_id` ASC, `e_fyziklani_team_id` ASC),
+
   CONSTRAINT `fk_fyziklani_submit_1`
   FOREIGN KEY (`fyziklani_task_id`)
   REFERENCES `fyziklani_task` (`fyziklani_task_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
+
   CONSTRAINT `fk_fyziklani_submit_2`
   FOREIGN KEY (`e_fyziklani_team_id`)
   REFERENCES `e_fyziklani_team` (`e_fyziklani_team_id`)
     ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+
+  CONSTRAINT `fk_fyziklani_submit_3`
+  FOREIGN KEY (`checked_by`)
+  REFERENCES `person` (`person_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+
+  CONSTRAINT `fk_fyziklani_submit_4`
+  FOREIGN KEY (`created_by`)
+  REFERENCES `person` (`person_id`)
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION
 )
-  ENGINE = InnoDB;
+  ENGINE = 'InnoDB';
 
 
 -- -----------------------------------------------------
@@ -1343,7 +1361,7 @@ CREATE TABLE IF NOT EXISTS `brawl_room` (
   `columns` INT           NOT NULL,
   PRIMARY KEY (`room_id`)
 )
-  ENGINE = InnoDB;
+  ENGINE = 'InnoDB';
 
 -- -----------------------------------------------------
 -- Table `brawl_team_position`
@@ -1368,7 +1386,7 @@ CREATE TABLE IF NOT EXISTS `brawl_team_position` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
 )
-  ENGINE = InnoDB;
+  ENGINE = 'InnoDB';
 
 -- -----------------------------------------------------
 -- Table `fyziklani_game_setup`
@@ -1411,7 +1429,7 @@ CREATE TABLE IF NOT EXISTS `schedule_group` (
   ENGINE = 'InnoDB';
 
 -- -----------------------------------------------------
--- Table `schedule_group`
+-- Table `schedule_item`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `schedule_item` (
   `schedule_item_id`  INT(11)        NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -1456,10 +1474,10 @@ CREATE TABLE IF NOT EXISTS `person_schedule` (
 -- Table `schedule_payment`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `schedule_payment` (
-  `schedule_payment_id`      INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `payment_id`                    INT(11) NOT NULL,
-  `person_schedule_id` INT(11) NOT NULL,
-  UNIQUE INDEX `UC_schedule_payment_1` (`person_schedule_id`),
+  `schedule_payment_id` INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `payment_id`          INT(11) NOT NULL,
+  `person_schedule_id`  INT(11) NOT NULL,
+  UNIQUE INDEX `UC_schedule_payment_1` (`person_schedule_id`, payment_id),
   INDEX `fk_schedule_payment_1_idx` (`payment_id` ASC),
   INDEX `fk_schedule_payment_2_idx` (`person_schedule_id` ASC),
   CONSTRAINT `fk_schedule_payment_1`

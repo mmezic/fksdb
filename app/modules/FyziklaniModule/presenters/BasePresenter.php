@@ -31,6 +31,10 @@ abstract class BasePresenter extends EventBasePresenter {
      * @var \ServiceFyziklaniTeamPosition
      */
     private $serviceFyziklaniTeamPosition;
+    /**
+     * @var \ServiceFyziklaniSubmit
+     */
+    private $serviceFyziklaniSubmit;
 
     /**
      * @var FyziklaniFactory
@@ -49,6 +53,13 @@ abstract class BasePresenter extends EventBasePresenter {
     }
 
     /**
+     * @param \ServiceFyziklaniSubmit $serviceFyziklaniSubmit
+     */
+    public function injectServiceFyziklaniSubmit(\ServiceFyziklaniSubmit $serviceFyziklaniSubmit) {
+        $this->serviceFyziklaniSubmit = $serviceFyziklaniSubmit;
+    }
+
+    /**
      * @param \ServiceFyziklaniTeamPosition $serviceFyziklaniTeamPosition
      */
     public function injectServiceFyziklaniTeamPosition(\ServiceFyziklaniTeamPosition $serviceFyziklaniTeamPosition) {
@@ -60,6 +71,13 @@ abstract class BasePresenter extends EventBasePresenter {
      */
     protected function getServiceFyziklaniTeamPosition(): \ServiceFyziklaniTeamPosition {
         return $this->serviceFyziklaniTeamPosition;
+    }
+
+    /**
+     * @return \ServiceFyziklaniSubmit
+     */
+    protected function getServiceFyziklaniSubmit(): \ServiceFyziklaniSubmit {
+        return $this->serviceFyziklaniSubmit;
     }
 
     /**

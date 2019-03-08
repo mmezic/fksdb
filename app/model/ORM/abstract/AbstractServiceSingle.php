@@ -44,7 +44,7 @@ abstract class AbstractServiceSingle extends TableSelection implements IService 
      * @param Connection $connection
      */
     public function __construct(Connection $connection) {
-        parent::__construct($this->tableName, $connection);
+        parent::__construct($this->getTableName(), $connection);
         $this->connection = $connection;
     }
 
@@ -64,13 +64,27 @@ abstract class AbstractServiceSingle extends TableSelection implements IService 
     }
 
     /**
+     * @return string
+     */
+    protected function getTableName(): string {
+        return $this->tableName;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getModelClassName(): string {
+        return $this->modelClassName;
+    }
+
+    /**
      * @internal Used also in MultiTableSelection.
      *
      * @param array $data
      * @return AbstractModelSingle
      */
     public function createFromArray(array $data) {
-        $className = $this->modelClassName;
+        $className = $this->getModelClassName();
         $data = $this->filterData($data);
         $result = new $className($data, $this);
         return $result;
@@ -81,7 +95,7 @@ abstract class AbstractServiceSingle extends TableSelection implements IService 
      * @return mixed
      */
     public function createFromTableRow(ActiveRow $row) {
-        $className = $this->modelClassName;
+        $className = $this->getModelClassName();
         return new $className($row->toArray(), $row->getTable());
     }
 
@@ -159,8 +173,9 @@ abstract class AbstractServiceSingle extends TableSelection implements IService 
      * @throws InvalidStateException
      */
     public function dispose(IModel $model) {
-        if (!$model instanceof $this->modelClassName) {
-            throw new InvalidArgumentException('Service for class ' . $this->modelClassName . ' cannot store ' . get_class($model));
+        $modelClassName = $this->getModelClassName();
+        if (!$model instanceof $modelClassName) {
+            throw new InvalidArgumentException('Service for class ' . $this->getModelClassName() . ' cannot store ' . get_class($model));
         }
         if (!$model->isNew() && $model->delete() === false) {
             $code = $this->getConnection()->errorCode();
@@ -172,7 +187,7 @@ abstract class AbstractServiceSingle extends TableSelection implements IService 
      * @return TableSelection
      */
     public function getTable() {
-        return new TypedTableSelection($this->modelClassName, $this->tableName, $this->connection);
+        return new TypedTableSelection($this->getModelClassName(), $this->getTableName(), $this->connection);
     }
 
     protected $defaults = null;
@@ -222,7 +237,7 @@ abstract class AbstractServiceSingle extends TableSelection implements IService 
      */
     private function getColumnMetadata() {
         if ($this->columns === null) {
-            $this->columns = $this->getConnection()->getSupplementalDriver()->getColumns($this->tableName);
+            $this->columns = $this->getConnection()->getSupplementalDriver()->getColumns($this->getTableName());
         }
         return $this->columns;
     }

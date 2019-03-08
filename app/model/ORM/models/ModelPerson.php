@@ -9,6 +9,7 @@ use ModelMPostContact;
 use Nette\Database\Table\GroupedSelection;
 use Nette\Database\Table\Selection;
 use Nette\Security\IResource;
+use ORM\Models\Events\ModelFyziklaniTeam;
 use YearCalculator;
 
 /**
@@ -448,6 +449,43 @@ class ModelPerson extends AbstractModelSingle implements IResource {
         foreach ($query as $row) {
             $row->delete();
         }
+    }
+
+    /**
+     * @param ModelEvent $event
+     * @return array
+     */
+    public function getRolesForEvent(ModelEvent $event): array {
+        $roles = [];
+        $eventId = $event->event_id;
+
+        $teachers = $this->getEventTeacher()->where('event_id', $eventId);
+        foreach ($teachers as $row) {
+            $team = ModelFyziklaniTeam::createFromTableRow($row);
+            $roles[] = [
+                'type' => 'teacher',
+                'team' => $team,
+            ];
+        }
+
+        $eventOrgs = $this->getEventOrg()->where('event_id', $eventId);
+        foreach ($eventOrgs as $row) {
+            $org = ModelEventOrg::createFromTableRow($row);
+            $roles[] = [
+                'type' => 'org',
+                'org' => $org,
+            ];
+        }
+
+        $eventParticipants = $this->getEventParticipant()->where('event_id', $eventId);
+        foreach ($eventParticipants as $row) {
+            $participant = ModelEventParticipant::createFromTableRow($row);
+            $roles[] = [
+                'type' => 'participant',
+                'participant' => $participant,
+            ];
+        }
+        return $roles;
     }
 
 }

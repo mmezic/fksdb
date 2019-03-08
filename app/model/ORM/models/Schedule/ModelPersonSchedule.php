@@ -3,6 +3,7 @@
 
 namespace FKSDB\ORM\Models\Schedule;
 
+use FKSDB\ORM\ModelPayment;
 use FKSDB\ORM\ModelPerson;
 use FKSDB\Transitions\IStateModel;
 use Nette\Database\Table\ActiveRow;
@@ -30,6 +31,17 @@ class ModelPersonSchedule extends \AbstractModelSingle implements IStateModel {
      */
     public function getScheduleItem(): ModelScheduleItem {
         return ModelScheduleItem::createFromTableRow($this->schedule_item);
+    }
+
+    /**
+     * @return ModelPayment|null
+     */
+    public function getPayment(){
+        $data = $this->related(\DbNames::TAB_SCHEDULE_PAYMENT, 'person_schedule_id')->select('payment.*')->fetch();
+        if (!$data) {
+            return null;
+        }
+        return ModelPayment::createFromTableRow($data);
     }
 
     /**

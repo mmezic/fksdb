@@ -61,18 +61,12 @@ class EditSubmitControl extends Control {
     }
 
     /**
-     * @param int $id
+     * @param \ModelFyziklaniSubmit $submit
      * @throws BadRequestException
      * @throws ClosedSubmittingException
      */
-    public function setSubmit(int $id) {
-        $row = $this->serviceFyziklaniSubmit->findByPrimary($id);
-
-        if (!$this->submit) {
-            throw new BadRequestException(_('Neexistující submit.'), 404);
-        }
-        $this->submit = \ModelFyziklaniSubmit::createFromTableRow($row);
-
+    public function setSubmit(\ModelFyziklaniSubmit $submit) {
+        $this->submit = $submit;
         $team = $this->submit->getTeam();
         if (!$team->hasOpenSubmitting()) {
             throw new ClosedSubmittingException($team);

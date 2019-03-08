@@ -4,13 +4,12 @@
 namespace FKSDB\Components\Grids\Schedule;
 
 use FKSDB\Components\Grids\BaseGrid;
-use FKSDB\ORM\ModelEventOrg;
 use FKSDB\ORM\ModelEventParticipant;
 use FKSDB\ORM\Models\Schedule\ModelPersonSchedule;
 use FKSDB\ORM\Models\Schedule\ModelScheduleItem;
+use Nette\Application\BadRequestException;
 use Nette\Utils\Html;
 use NiftyGrid\DataSource\NDataSource;
-use ORM\Models\Events\ModelFyziklaniTeam;
 
 /**
  * Class PersonsGrid
@@ -57,12 +56,29 @@ class PersonsGrid extends BaseGrid {
 
         $this->addColumnRole();
 
+        $this->addColumnPayment();
+
         $this->addColumn('state', _('State'))->setRenderer(function ($row) {
             $model = ModelPersonSchedule::createFromTableRow($row);
             return $model->state;
         });
-
     }
+
+    /**
+     * @throws \NiftyGrid\DuplicateColumnException
+     */
+    protected function addColumnPayment() {
+        $this->addColumn('payment', _('Payment'))
+            ->setRenderer(function ($row) {
+                $model = ModelPersonSchedule::createFromTableRow($row);
+                $modelPayment = $model->getPayment();
+                if (!$modelPayment) {
+                    return Html::el('span')->addAttributes(['class' => 'badge badge-danger'])->add('No payment found');
+                }
+                return Html::el('span')->addAttributes(['class' => $modelPayment->getUIClass()])->add('#' . $modelPayment->getPaymentId() . '-' . $modelPayment->getStateLabel());
+            })->setSortable(false);
+    }
+
     /**
      * @throws \NiftyGrid\DuplicateColumnException
      */
@@ -71,41 +87,42 @@ class PersonsGrid extends BaseGrid {
             ->setRenderer(function ($row) {
                 $container = Html::el('span');
                 $model = ModelPersonSchedule::createFromTableRow($row);
-                $hasRole = false;
                 $person = $model->getPerson();
-                $eventId = $model->getScheduleItem()->getGroup()->event_id;
-
-                $teachers = $person->getEventTeacher()->where('event_id', $eventId);
-                foreach ($teachers as $row) {
-                    $hasRole = true;
-                    $team = ModelFyziklaniTeam::createFromTableRow($row);
-                    $container->add(Html::el('span')
-                        ->addAttributes(['class' => 'badge badge-9'])
-                        ->add(_('Teacher') . ' - ' . $team->name));
-                }
-
-                $eventOrgs = $person->getEventOrg()->where('event_id', $eventId);
-                foreach ($eventOrgs as $row) {
-                    $hasRole = true;
-                    $org = ModelEventOrg::createFromTableRow($row);
-                    $container->add(Html::el('span')
-                        ->addAttributes(['class' => 'badge badge-7'])
-                        ->add(_('Org') . ' - ' . $org->note));
-                }
-
-                $eventParticipants = $person->getEventParticipant()->where('event_id', $eventId);
-                foreach ($eventParticipants as $row) {
-                    $hasRole = true;
-                    $participant = ModelEventParticipant::createFromTableRow($row);
-                    $container->add(Html::el('span')
-                        ->addAttributes(['class' => 'badge badge-10'])
-                        ->add(_('Participant') . ' - ' . _($participant->status)));
-                }
-
-                if (!$hasRole) {
+                $roles = $person->getRolesForEvent($model->getScheduleItem()->getGroup()->getEvent());
+                if (!\count($roles)) {
                     $container->add(Html::el('span')
                         ->addAttributes(['class' => 'badge badge-danger'])
                         ->add(_('No role')));
+                    return $container;
+                }
+                foreach ($roles as $role) {
+                    switch ($role['type']) {
+                        case 'teacher':
+                            $container->add(Html::el('span')
+                                ->addAttributes(['class' => 'badge badge-9'])
+                                ->add(_('Teacher') . ' - ' . $role['team']->name));
+                            break;
+                        case'org':
+                            $container->add(Html::el('span')
+                                ->addAttributes(['class' => 'badge badge-7'])
+                                ->add(_('Org') . ' - ' . $role['org']->note));
+                            break;
+                        case'participant':
+                            $team = null;
+                            /**
+                             * @var ModelEventParticipant $participant
+                             */
+                            $participant = $role['participant'];
+                            try {
+                                $team = $participant->getFyziklaniTeam();
+                            } catch (BadRequestException $e) {
+                            }
+                            $container->add(Html::el('span')
+                                ->addAttributes(['class' => 'badge badge-10'])
+                                ->add(_('Participant') . ' - ' . _($participant->status) .
+                                    ($team ? (' - team: ' . $team->name) : '')
+                                ));
+                    }
                 }
                 return $container;
             })->setSortable(false);

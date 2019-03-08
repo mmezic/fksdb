@@ -45,6 +45,7 @@ class AllSubmitsGrid extends SubmitsGrid {
         $this->addColumn('points', _('Body'));
         $this->addColumn('room', _('Room'));
         $this->addColumn('modified', _('Zadané'));
+        $this->addColumnState();
 
         $this->addButton('edit', null)->setClass('btn btn-sm btn-warning')->setLink(function ($row) use ($presenter) {
             return $presenter->link(':Fyziklani:Submit:edit', ['id' => $row->fyziklani_submit_id]);
@@ -57,8 +58,15 @@ class AllSubmitsGrid extends SubmitsGrid {
         })->setConfirmationDialog(function () {
             return _('Opravdu vzít submit úlohy zpět?');
         })->setText(_('Smazat'))->setShow(function (\ModelFyziklaniSubmit $row) {
-
             return $row->getTeam()->hasOpenSubmitting() && !is_null($row->points);
+        });
+
+        $this->addButton('check', null)->setClass('btn btn-sm btn-success')->setLink(function ($row) {
+            return $this->link('check!', $row->fyziklani_submit_id);
+        })->setConfirmationDialog(function () {
+            return _('Opravdu vzít submit úlohy zpět?');
+        })->setText(_('Check'))->setShow(function (\ModelFyziklaniSubmit $row) {
+            return $row->state !== \ModelFyziklaniSubmit::STATE_CHECKED;
         });
 
         $submits = $this->serviceFyziklaniSubmit->findAll($this->event)->where('fyziklani_submit.points IS NOT NULL')
@@ -115,5 +123,28 @@ class AllSubmitsGrid extends SubmitsGrid {
         ]);
         $this->serviceFyziklaniSubmit->save($submit);
         $this->flashMessage(_('Submit has been deleted.'), \BasePresenter::FLASH_SUCCESS);
+    }
+
+    /**
+     * @param $id
+     */
+    public function handleCheck($id) {
+        $row = $this->serviceFyziklaniSubmit->findByPrimary($id);
+        if (!$row) {
+            $this->flashMessage(_('Submit dos not exists.'), \BasePresenter::FLASH_ERROR);
+            return;
+        }
+        $submit = \ModelFyziklaniSubmit::createFromTableRow($row);
+
+        $this->serviceFyziklaniSubmit->updateModel($submit, [
+            'state' => \ModelFyziklaniSubmit::STATE_CHECKED,
+            /* ugly, exclude previous value of `modified` from query
+             * so that `modified` is set automatically by DB
+             * see https://dev.mysql.com/doc/refman/5.5/en/timestamp-initialization.html
+             */
+            'modified' => null
+        ]);
+        $this->serviceFyziklaniSubmit->save($submit);
+        $this->flashMessage(_('Submit has checked.'), \BasePresenter::FLASH_SUCCESS);
     }
 }

@@ -14,6 +14,7 @@ use FKSDB\Components\Controls\Fyziklani\ResultsAndStatistics\Statistics\TaskStat
 use FKSDB\Components\Controls\Fyziklani\ResultsAndStatistics\Statistics\TeamStatistics;
 use FKSDB\Components\Controls\Fyziklani\RoutingDownload;
 use FKSDB\Components\Controls\Fyziklani\RoutingEdit;
+use FKSDB\Components\Controls\Fyziklani\Submit\DetailControl;
 use FKSDB\Components\Controls\Fyziklani\TaskCodeInput;
 use FKSDB\Components\Grids\Fyziklani\AllSubmitsGrid;
 use FKSDB\Components\Grids\Fyziklani\TaskGrid;
@@ -234,5 +235,12 @@ class FyziklaniFactory {
      */
     public function createTeamSubmitsGrid(ModelFyziklaniTeam $team): TeamSubmitsGrid {
         return new TeamSubmitsGrid($team, $this->serviceFyziklaniSubmit);
+    }
+
+    /**
+     * @return DetailControl
+     */
+    public function createSubmitDetailControl(): DetailControl {
+        return new DetailControl($this->translator, $this->serviceFyziklaniSubmit);
     }
 }
